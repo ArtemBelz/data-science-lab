@@ -32,7 +32,7 @@ def download_data(original_id):
     df.to_csv(f'province{provinces[original_id]}_{current_datetime}.csv')
 
 
-def read_dir(path):
+def create_all_data(path):
     appended_data = []
     # Получаем все файлы по поттерну из указанной папки
     for path in glob.glob(os.path.join(path, "province*.csv")):
@@ -41,8 +41,8 @@ def read_dir(path):
         df['province'] = int(os.path.basename(path).split("_")[0].replace("province", ""))
         # Сохраняем полученный фрейм
         appended_data.append(df)
-    # Создаем один фрейм из всего списка
-    return pd.concat(appended_data)
+    # Создаем один фрейм из всего списка и записываем его в файл
+    pd.concat(appended_data).reset_index(drop=True).to_csv('all_data.csv')
 
 
 def get_extrema_vhi(df, province, year):
@@ -80,10 +80,6 @@ def check_extreme_dry(df, province):
 
 
 # Скачиваем данные на каждый регион
-for i in range(len(provinces)):
-    download_data(i)
-
-df = read_dir("D:\Projects\python\lab1")
-get_extrema_vhi(df, 2, 2009)
-check_middle_dry(df, 2)
-check_extreme_dry(df, 2)
+def download_all_data():
+    for i in range(len(provinces)):
+        download_data(i)
